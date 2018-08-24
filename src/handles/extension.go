@@ -6,7 +6,6 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"models"
@@ -39,7 +38,7 @@ const MANIFEST = "manifest.json"
 
 func HandelPayload(payload *payload) {
 	//更新插件仓库
-	cmd := exec.Command("git", "-C", common.Config.Repo, "pull")
+	cmd := exec.Command("/bin/sh", "-c", "cd "+common.Config.Repo+";git pull")
 	_, err := cmd.Output()
 	if err == nil {
 		//扫描入库
@@ -91,7 +90,6 @@ func HandelPayload(payload *payload) {
 
 func WebHook(w http.ResponseWriter, r *http.Request) {
 	payloadBts, _ := ioutil.ReadAll(r.Body)
-	fmt.Println(string(payloadBts))
 	signature := r.Header.Get("X-Hub-Signature")
 	//验证WebHook合法性
 	if checkSignature(payloadBts, signature) {

@@ -97,6 +97,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 	if err != nil {
 		return nil, err
 	}
+	page.Data = []interface{}{}
 	for rows.Next() {
 		var extension Extension
 		err = rows.Scan(&extension.Id, &extension.Title, &extension.Version, &extension.Description, &extension.Path, &extension.Files, &extension.CreateTime, &extension.UpdateTime)
