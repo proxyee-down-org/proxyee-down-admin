@@ -1,12 +1,15 @@
 package main
 
 import (
-	"handle"
+	"common"
+	"handles"
 	"net/http"
-	"os"
+	"strconv"
 )
 
 func main() {
-	http.HandleFunc("/extension/webhook", handle.WebHook)
-	http.ListenAndServe(":"+os.Args[1], nil)
+	http.HandleFunc("/extension/webhook", handles.WebHook)
+	http.HandleFunc("/extension/search", handles.Search)
+	http.HandleFunc("/extension/down", handles.Down)
+	http.ListenAndServe(":"+strconv.Itoa(common.Config.Port), nil)
 }

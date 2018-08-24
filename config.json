@@ -1,0 +1,12 @@
+{
+  "port": 9494,
+  "secret": "123456",
+  "repo": "E:/study/proxyee-down-extension",
+  "db": {
+    "host": "192.168.2.20",
+    "port": 3306,
+    "uri": "/pdown",
+    "username": "root",
+    "password": "vsgame&2015"
+  }
+}
