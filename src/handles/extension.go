@@ -94,7 +94,7 @@ func WebHook(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(payloadBts))
 	signature := r.Header.Get("X-Hub-Signature")
 	//验证WebHook合法性
-	if true || checkSignature(payloadBts, signature) {
+	if checkSignature(payloadBts, signature) {
 		//读取响应
 		var payload payload
 		json.Unmarshal(payloadBts, &payload)
