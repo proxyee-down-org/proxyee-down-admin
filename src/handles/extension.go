@@ -55,10 +55,13 @@ func HandelPayload(payload *payload) {
 				var extensionDir = filepath.Join(rootDir, f.Name())
 				filepath.Walk(extensionDir, func(path string, info os.FileInfo, err error) error {
 					if !info.IsDir() {
-						if len(otherFileNames) != 0 {
-							otherFileNames += ","
+						fileName := strings.Replace(path[len(extensionDir):], "\\", "/", -1)
+						if fileName[1:2] != "." {
+							if len(otherFileNames) != 0 {
+								otherFileNames += ","
+							}
+							otherFileNames += fileName
 						}
-						otherFileNames += strings.Replace(path[len(extensionDir):], "\\", "/", -1)
 					}
 					return nil
 				})
