@@ -9,10 +9,15 @@ import (
 )
 
 type configuration struct {
-	Port   int
-	Secret string
-	Repo   string
-	Db     struct {
+	Port int
+	App  struct {
+		Server string
+	}
+	Extension struct {
+		Secret string
+		Repo   string
+	}
+	Db struct {
 		Host     string
 		Port     int
 		Uri      string

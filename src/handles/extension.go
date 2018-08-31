@@ -29,7 +29,7 @@ func checkSignature(payloadBts []byte, signature string) bool {
 	if len(signature) == 0 {
 		return false
 	}
-	mac := hmac.New(sha1.New, []byte(common.Config.Secret))
+	mac := hmac.New(sha1.New, []byte(common.Config.Extension.Secret))
 	mac.Write(payloadBts)
 	return hex.EncodeToString(mac.Sum(nil)) == signature[5:]
 }
@@ -38,11 +38,11 @@ const MANIFEST = "manifest.json"
 
 func HandelPayload(payload *payload) {
 	//更新插件仓库
-	cmd := exec.Command("/bin/sh", "-c", "cd "+common.Config.Repo+";git pull")
+	cmd := exec.Command("/bin/sh", "-c", "cd "+common.Config.Extension.Repo+";git pull")
 	_, err := cmd.Output()
 	if err == nil {
 		//扫描入库
-		var rootDir = common.Config.Repo
+		var rootDir = common.Config.Extension.Repo
 		files, _ := ioutil.ReadDir(rootDir)
 		//遍历所有插件目录，检测版本号是否有变动
 		for _, f := range files {
