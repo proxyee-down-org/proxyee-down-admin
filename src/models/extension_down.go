@@ -22,6 +22,7 @@ func (extensionDown *ExtensionDown) Insert() {
 		return
 	}
 	stmt, err := db.Prepare("insert into extension_down (ext_id,version,ip,ua,create_time) values (?,?,?,?,?)")
+	defer stmt.Close()
 	if err != nil {
 		return
 	}

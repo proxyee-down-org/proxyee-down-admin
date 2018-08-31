@@ -27,6 +27,7 @@ func SelectExtensionByPath(path string) (*Extension, error) {
 		return nil, err
 	}
 	rows, err := db.Query("select id,version from extension where path = ?", path)
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +58,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 	}
 
 	stmt, err := db.Prepare("select count(*) from extension" + where)
+	defer stmt.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +69,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 	} else {
 		rows, queryErr = stmt.Query()
 	}
+	defer rows.Close()
 	if queryErr != nil {
 		return nil, queryErr
 	}
@@ -82,6 +85,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 	}
 
 	stmt, err = db.Prepare("select id,title,version,description,path,files,create_time,update_time from extension" + where + " limit ?,?")
+	defer stmt.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +95,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 	} else {
 		rows, queryErr = stmt.Query()
 	}
+	defer rows.Close()
 	if queryErr != nil {
 		return nil, queryErr
 	}
@@ -117,6 +122,7 @@ func (extension *Extension) Update() {
 		return
 	}
 	stmt, err := db.Prepare("update extension set title=?,version=?,description=?,files=?,update_time=? where id=?")
+	defer stmt.Close()
 	if err != nil {
 		return
 	}
@@ -130,6 +136,7 @@ func (extension *Extension) Insert() {
 		return
 	}
 	stmt, err := db.Prepare("insert into extension (title,version,description,path,files,create_time,update_time) values (?,?,?,?,?,?,?)")
+	defer stmt.Close()
 	if err != nil {
 		return
 	}

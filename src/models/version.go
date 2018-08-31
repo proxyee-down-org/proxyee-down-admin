@@ -21,6 +21,7 @@ func GetNewVersion() (*Version, error) {
 		return nil, err
 	}
 	rows, err := db.Query("select version,path,description from version order by version desc limit 1")
+	defer rows.Close()
 	if err != nil {
 		return nil, err
 	}
