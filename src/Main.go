@@ -9,6 +9,7 @@ import (
 
 func main() {
 	http.HandleFunc("/version/checkUpdate", handles.CheckUpdate)
+	http.HandleFunc("/download/release", handles.Download)
 	http.HandleFunc("/extension/webhook", handles.WebHook)
 	http.HandleFunc("/extension/search", handles.Search)
 	http.HandleFunc("/extension/down", handles.Down)
