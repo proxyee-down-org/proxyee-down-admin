@@ -13,6 +13,7 @@ type Extension struct {
 	Id          int64     `json:"id"`
 	Title       string    `json:"title"`
 	Version     float64   `json:"version"`
+	Homepage    string    `json:"homepage"`
 	Description string    `json:"description"`
 	Path        string    `json:"path"`
 	Files       string    `json:"files"`
@@ -84,7 +85,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 		}
 	}
 
-	stmt, err = db.Prepare("select id,title,version,description,path,files,create_time,update_time from extension" + where + " limit ?,?")
+	stmt, err = db.Prepare("select id,title,version,homepage,description,path,files,create_time,update_time from extension" + where + " limit ?,?")
 	defer stmt.Close()
 	if err != nil {
 		return nil, err
@@ -105,7 +106,7 @@ func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page,
 	page.Data = []interface{}{}
 	for rows.Next() {
 		var extension Extension
-		err = rows.Scan(&extension.Id, &extension.Title, &extension.Version, &extension.Description, &extension.Path, &extension.Files, &extension.CreateTime, &extension.UpdateTime)
+		err = rows.Scan(&extension.Id, &extension.Title, &extension.Version, &extension.Homepage, &extension.Description, &extension.Path, &extension.Files, &extension.CreateTime, &extension.UpdateTime)
 		if err != nil {
 			return nil, err
 		} else {
@@ -121,12 +122,12 @@ func (extension *Extension) Update() {
 	if err != nil {
 		return
 	}
-	stmt, err := db.Prepare("update extension set title=?,version=?,description=?,files=?,update_time=? where id=?")
+	stmt, err := db.Prepare("update extension set title=?,version=?,homepage=?,description=?,files=?,update_time=? where id=?")
 	defer stmt.Close()
 	if err != nil {
 		return
 	}
-	stmt.Exec(extension.Title, extension.Version, extension.Description, extension.Files, extension.UpdateTime, extension.Id)
+	stmt.Exec(extension.Title, extension.Version, extension.Homepage, extension.Description, extension.Files, extension.UpdateTime, extension.Id)
 }
 
 func (extension *Extension) Insert() {
@@ -135,10 +136,10 @@ func (extension *Extension) Insert() {
 	if err != nil {
 		return
 	}
-	stmt, err := db.Prepare("insert into extension (title,version,description,path,files,create_time,update_time) values (?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("insert into extension (title,version,homepage,description,path,files,create_time,update_time) values (?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 	if err != nil {
 		return
 	}
-	stmt.Exec(extension.Title, extension.Version, extension.Description, extension.Path, extension.Files, extension.CreateTime, extension.CreateTime)
+	stmt.Exec(extension.Title, extension.Version, extension.Homepage, extension.Description, extension.Path, extension.Files, extension.CreateTime, extension.CreateTime)
 }

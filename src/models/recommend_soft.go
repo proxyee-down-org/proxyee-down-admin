@@ -11,6 +11,7 @@ type RecommendSoft struct {
 	Preview    string    `json:"preview"`
 	Url        string    `json:"url"`
 	Status     int       `json:"status"`
+	Rank       int       `json:"rank"`
 	CreateTime time.Time `json:"createTime"`
 }
 
@@ -21,7 +22,7 @@ func SelectRecommendSoft() (*[]RecommendSoft, error) {
 	if err != nil {
 		return nil, err
 	}
-	rows, err := db.Query("select title,preview,url from recommend_soft where status = 1")
+	rows, err := db.Query("select title,preview,url from recommend_soft where status = 1 order by rank")
 	defer rows.Close()
 	if err != nil {
 		return nil, err
