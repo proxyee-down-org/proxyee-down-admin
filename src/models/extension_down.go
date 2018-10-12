@@ -10,6 +10,7 @@ type ExtensionDown struct {
 	Id         int64
 	ExtId      int64
 	Version    float64
+	PdVersion  float64
 	Ip         string
 	Ua         string
 	CreateTime time.Time
@@ -21,10 +22,10 @@ func (extensionDown *ExtensionDown) Insert() {
 	if err != nil {
 		return
 	}
-	stmt, err := db.Prepare("insert into extension_down (ext_id,version,ip,ua,create_time) values (?,?,?,?,?)")
+	stmt, err := db.Prepare("insert into extension_down (ext_id,version,pd_version,ip,ua,create_time) values (?,?,?,?,?,?)")
 	defer stmt.Close()
 	if err != nil {
 		return
 	}
-	stmt.Exec(extensionDown.ExtId, extensionDown.Version, extensionDown.Ip, extensionDown.Ua, extensionDown.CreateTime)
+	stmt.Exec(extensionDown.ExtId, extensionDown.Version, extensionDown.PdVersion, extensionDown.Ip, extensionDown.Ua, extensionDown.CreateTime)
 }

@@ -10,9 +10,13 @@ import (
 )
 
 type Extension struct {
-	Id          int64     `json:"id"`
-	Title       string    `json:"title"`
-	Version     float64   `json:"version"`
+	Id      int64   `json:"id"`
+	Title   string  `json:"title"`
+	Version float64 `json:"version"`
+	Require struct {
+		Min float64 `json:"min"`
+		Max float64 `json:"max"`
+	} `json:"require"`
 	Homepage    string    `json:"homepage"`
 	Description string    `json:"description"`
 	Path        string    `json:"path"`
@@ -44,17 +48,17 @@ func SelectExtensionByPath(path string) (*Extension, error) {
 	return nil, nil
 }
 
-func SelectExtensionByKeyword(keyword string, pageNum int, pageSize int) (*Page, error) {
+func SelectExtensionByKeyword(keyword string, pdVersion float64, pageNum int, pageSize int) (*Page, error) {
 	page := Page{PageNum: pageNum, PageSize: pageSize}
 	db, err := common.GetDb()
 	defer db.Close()
 	if err != nil {
 		return nil, err
 	}
-	var where = ""
-	var params []interface{}
+	var where = " where (require_min <= 0 or require_min <= ? ) and (require_max <=0 or require_max >= ? )"
+	var params = []interface{}{pdVersion, pdVersion}
 	if len(strings.TrimSpace(keyword)) > 0 {
-		where = " where title like CONCAT('%',?,'%') or description like CONCAT('%',?,'%')"
+		where = " and (title like CONCAT('%',?,'%') or description like CONCAT('%',?,'%'))"
 		params = append(params, []interface{}{keyword, keyword}...)
 	}
 
@@ -122,12 +126,12 @@ func (extension *Extension) Update() {
 	if err != nil {
 		return
 	}
-	stmt, err := db.Prepare("update extension set title=?,version=?,homepage=?,description=?,files=?,update_time=? where id=?")
+	stmt, err := db.Prepare("update extension set title=?,version=?,require_min=?,require_max=?,homepage=?,description=?,files=?,update_time=? where id=?")
 	defer stmt.Close()
 	if err != nil {
 		return
 	}
-	stmt.Exec(extension.Title, extension.Version, extension.Homepage, extension.Description, extension.Files, extension.UpdateTime, extension.Id)
+	stmt.Exec(extension.Title, extension.Version, extension.Require.Min, extension.Require.Max, extension.Homepage, extension.Description, extension.Files, extension.UpdateTime, extension.Id)
 }
 
 func (extension *Extension) Insert() {
@@ -136,10 +140,10 @@ func (extension *Extension) Insert() {
 	if err != nil {
 		return
 	}
-	stmt, err := db.Prepare("insert into extension (title,version,homepage,description,path,files,create_time,update_time) values (?,?,?,?,?,?,?,?)")
+	stmt, err := db.Prepare("insert into extension (title,version,require_min,require_max,homepage,description,path,files,create_time,update_time) values (?,?,?,?,?,?,?,?,?,?)")
 	defer stmt.Close()
 	if err != nil {
 		return
 	}
-	stmt.Exec(extension.Title, extension.Version, extension.Homepage, extension.Description, extension.Path, extension.Files, extension.CreateTime, extension.CreateTime)
+	stmt.Exec(extension.Title, extension.Version, extension.Require.Min, extension.Require.Max, extension.Homepage, extension.Description, extension.Path, extension.Files, extension.CreateTime, extension.CreateTime)
 }

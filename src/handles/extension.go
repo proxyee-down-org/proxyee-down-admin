@@ -114,7 +114,12 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		pageSize = 1
 	}
-	page, err := models.SelectExtensionByKeyword(r.Form.Get("keyword"), pageSize, 10)
+	pdVersion := r.Form.Get("pd_version")
+	pdVersionFloat64 := 3.12
+	if len(pdVersion) != 0 {
+		pdVersionFloat64, err = strconv.ParseFloat(pdVersion, 64)
+	}
+	page, err := models.SelectExtensionByKeyword(r.Form.Get("keyword"), pdVersionFloat64, pageSize, 10)
 	if err == nil {
 		bts, err := json.Marshal(page)
 		if err == nil {
@@ -136,13 +141,19 @@ func Down(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	extId := r.Form.Get("ext_id")
 	version := r.Form.Get("version")
+	pdVersion := r.Form.Get("pd_version")
 	if len(extId) > 0 {
 		extIdInt64, err := strconv.ParseInt(extId, 10, 64)
 		versionFloat64, err := strconv.ParseFloat(version, 64)
+		pdVersionFloat64 := 3.12
+		if len(pdVersion) != 0 {
+			pdVersionFloat64, err = strconv.ParseFloat(pdVersion, 64)
+		}
 		if err == nil {
 			extensionDown := models.ExtensionDown{
 				ExtId:      extIdInt64,
 				Version:    versionFloat64,
+				PdVersion:  pdVersionFloat64,
 				Ip:         models.GetIp(r),
 				Ua:         r.UserAgent(),
 				CreateTime: time.Now(),
