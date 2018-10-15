@@ -114,7 +114,7 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		pageSize = 1
 	}
-	pdVersion := r.Form.Get("pd_version")
+	pdVersion := r.Form.Get("version")
 	pdVersionFloat64 := 3.12
 	if len(pdVersion) != 0 {
 		pdVersionFloat64, err = strconv.ParseFloat(pdVersion, 64)
