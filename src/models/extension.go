@@ -25,6 +25,11 @@ type Extension struct {
 	UpdateTime  time.Time `json:"updateTime"`
 }
 
+type ExtensionCheck struct {
+	Version float64 `json:"version"`
+	Path    string  `json:"path"`
+}
+
 func SelectExtensionByPath(path string) (*Extension, error) {
 	db, err := common.GetDb()
 	defer db.Close()
@@ -118,6 +123,47 @@ func SelectExtensionByKeyword(keyword string, pdVersion float64, pageNum int, pa
 		}
 	}
 	return &page, nil
+}
+
+func CheckExtensionUpdate(extensionChecks []ExtensionCheck) (*[]Extension, error) {
+	db, err := common.GetDb()
+	defer db.Close()
+	if err != nil {
+		return nil, err
+	}
+	var where = ""
+	var params []interface{}
+	if len(extensionChecks) > 0 {
+		where = " where "
+		for index, check := range extensionChecks {
+			params = append(params, []interface{}{check.Path, check.Version}...)
+			if index != 0 {
+				where += "or"
+			}
+			where += "(path = ? and version > ?)"
+		}
+	}
+	stmt, err := db.Prepare("select path,version from extension" + where)
+	defer stmt.Close()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := stmt.Query(params...)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+	var extensions []Extension
+	for rows.Next() {
+		var extension Extension
+		err = rows.Scan(&extension.Path, &extension.Version)
+		if err != nil {
+			return nil, err
+		} else {
+			extensions = append(extensions, extension)
+		}
+	}
+	return &extensions, nil
 }
 
 func (extension *Extension) Update() {

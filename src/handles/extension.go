@@ -136,6 +136,41 @@ func Search(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "params error")
 }
 
+func CheckExtensionUpdate(w http.ResponseWriter, r *http.Request) {
+	models.SetCORS(w)
+	if strings.EqualFold(r.Method, "options") {
+		return
+	}
+	payloadBts, _ := ioutil.ReadAll(r.Body)
+	if len(payloadBts) == 0 {
+		w.WriteHeader(400)
+		io.WriteString(w, "params error")
+		return
+	}
+	var extensionChecks []models.ExtensionCheck
+	err := json.Unmarshal(payloadBts, &extensionChecks)
+	if err != nil {
+		w.WriteHeader(400)
+		io.WriteString(w, "params error")
+		return
+	}
+	extensions, err := models.CheckExtensionUpdate(extensionChecks)
+	if err == nil {
+		bts, err := json.Marshal(extensions)
+		if err == nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.Write(bts)
+			return
+		} else {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Println(err)
+	}
+	w.WriteHeader(500)
+	io.WriteString(w, "params error")
+}
+
 func Down(w http.ResponseWriter, r *http.Request) {
 	models.SetCORS(w)
 	r.ParseForm()

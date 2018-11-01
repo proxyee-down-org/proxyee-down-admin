@@ -30,6 +30,6 @@ func GetIp(r *http.Request) string {
 
 func SetCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Expose-Methods", "*")
-	w.Header().Set("Access-Control-Expose-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
 }
