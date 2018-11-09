@@ -14,5 +14,6 @@ func main() {
 	http.HandleFunc("/extension/checkExtensionUpdate", handles.CheckExtensionUpdate)
 	http.HandleFunc("/extension/down", handles.Down)
 	http.HandleFunc("/recommend/soft", handles.RecommendSoft)
+	http.HandleFunc("/private/bdyResolve", handles.BdyResolve)
 	http.ListenAndServe(":"+strconv.Itoa(common.Config.Port), nil)
 }
